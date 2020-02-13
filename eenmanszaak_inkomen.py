@@ -4,28 +4,51 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
 
-def bereken_zvw_premie(belastbaar_inkomen):
+def get_info(jaar):
+
+    if jaar == 2019:
+        info = {
+            'zvw_premie_grens': 55927,
+            'zvw_premie_percentage': 0.057,
+            'zelfstandigenaftrek': 7280,
+            'startersaftrek': 2123
+        }
+    elif jaar == 2020:
+        info = {
+            'zvw_premie_grens': 57232,
+            'zvw_premie_percentage': 0.0545,
+            'zelfstandigenaftrek': 7030,
+            'startersaftrek': 2123,
+        }
+
+    return(info)
+
+def bereken_zvw_premie(belastbaar_inkomen, info):
     if belastbaar_inkomen < 0:
         zvw_premie = 0
     
-    if belastbaar_inkomen > 55927:
-        zvw_premie = round(55927 * 0.057 * -1, 2)
+    if belastbaar_inkomen > info['zvw_premie_grens']:
+        zvw_premie = round(info['zvw_premie_grens'] * info['zvw_premie_percentage'] * -1, 2)
     else:
-        zvw_premie = round(belastbaar_inkomen * 0.057 * -1, 2)
+        zvw_premie = round(belastbaar_inkomen * info['zvw_premie_percentage'] * -1, 2)
 
     return(zvw_premie)
 
 
 def bereken_eenmanszaak_inkomen(
     omzet_ex_btw,
+    jaar,
     kosten = 0,
     representatiekosten = 0,
     starter = True,
     urencriterium_voldaan = True
 ):
+
+    info = get_info(jaar)
+
     # Hoogte zelfstandigen aftrek bepalen
-    if urencriterium_voldaan and omzet_ex_btw >= 7280:
-        zelfstandigen_aftrek = 7280
+    if urencriterium_voldaan and omzet_ex_btw >= info['zelfstandigenaftrek']:
+        zelfstandigen_aftrek = info['zelfstandigenaftrek']
     
     elif urencriterium_voldaan:
         zelfstandigen_aftrek = omzet_ex_btw
@@ -37,8 +60,8 @@ def bereken_eenmanszaak_inkomen(
 
     # Hoogte startersaftrek bepalen
     if urencriterium_voldaan and starter:
-        if omzet_over > 2123:
-            starters_aftrek = 2123
+        if omzet_over > info['startersaftrek']:
+            starters_aftrek = info['startersaftrek']
 
         elif omzet_over > 0:
             starters_aftrek = omzet_over
@@ -70,11 +93,11 @@ def bereken_eenmanszaak_inkomen(
     belastbare_winst = (1 - 0.14) * omzet_over
 
     # Hoogte inkmostenbelasting
-    inkomstenbelasting_details = bereken_inkomstenbelasting(belastbare_winst)
+    inkomstenbelasting_details = bereken_inkomstenbelasting(belastbare_winst, jaar)
     inkomstenbelasting = inkomstenbelasting_details['inkomstenbelasting']
 
     # Zvw premie
-    zvw_premie = bereken_zvw_premie(belastbare_winst)
+    zvw_premie = bereken_zvw_premie(belastbare_winst, info)
 
     # Inkomen
     inkomen = belastbare_winst + inkomstenbelasting + mkb_winstvrijstelling + zelfstandigen_aftrek + starters_aftrek + zvw_premie
@@ -124,10 +147,10 @@ def plot_inkomsten_eenmanszaak():
     plt.show()
 
 if __name__ == '__main__':
-    eenmanszaak_details = bereken_eenmanszaak_inkomen(29120, urencriterium_voldaan=False)
+    eenmanszaak_details = bereken_eenmanszaak_inkomen(100000, 2020, kosten=0, urencriterium_voldaan=True, )
     eenmanszaak_details = pd.DataFrame(list(eenmanszaak_details.items()), columns=['Post', 'Eur'])
     print(eenmanszaak_details)
-    plot_inkomsten_eenmanszaak()
+    # plot_inkomsten_eenmanszaak()  
 
     
 

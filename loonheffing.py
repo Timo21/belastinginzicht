@@ -20,71 +20,88 @@ class Loonbelastingschijf:
             self.bovengrens = bovengrens
             self.loonbelastingspercentage = loonbelastingspercentage
 
+class LoonbelastingCalculator:
+    def __init__(self):
 
-#In code definieren van belastingschalen, kan later csv
-loonbelastingschaal2017 = Loonbelastingschaal(
-    naam="Belastingschaal 2017",
-    jaar="2017",
-    belastingschijf1=Loonbelastingschijf("Belastingschijf 1", 1, 0, 19982, 0.3655),
-    belastingschijf2=Loonbelastingschijf("Belastingschijf 2", 2, 19983, 33791, 0.408),
-    belastingschijf3=Loonbelastingschijf("Belastingschijf 3", 3, 33792, 67072, 0.408),
-    belastingschijf4=Loonbelastingschijf("Belastingschijf 4", 4, 67073, 999999999, 0.502))
+        #In code definieren van belastingschalen, kan later csv
+        self.loonbelastingschaal2017 = Loonbelastingschaal(
+            naam="Belastingschaal 2017",
+            jaar="2017",
+            belastingschijf1=Loonbelastingschijf("Belastingschijf 1", 1, 0, 19982, 0.3655),
+            belastingschijf2=Loonbelastingschijf("Belastingschijf 2", 2, 19983, 33791, 0.408),
+            belastingschijf3=Loonbelastingschijf("Belastingschijf 3", 3, 33792, 67072, 0.408),
+            belastingschijf4=Loonbelastingschijf("Belastingschijf 4", 4, 67073, 999999999, 0.502))
 
-loonbelastingschaal2019 = Loonbelastingschaal(
-    naam="Belastingschaal 2019",
-    jaar="2019",
-    belastingschijf1=Loonbelastingschijf("Belastingschijf 1", 1, 0, 20384, 0.3665),
-    belastingschijf2=Loonbelastingschijf("Belastingschijf 2", 2, 20385, 34300, 0.381),
-    belastingschijf3=Loonbelastingschijf("Belastingschijf 3", 3, 34301, 68507, 0.381),
-    belastingschijf4=Loonbelastingschijf("Belastingschijf 4", 4, 68508, 999999999, 0.5175))
+        self.loonbelastingschaal2019 = Loonbelastingschaal(
+            naam="Belastingschaal 2019",
+            jaar="2019",
+            belastingschijf1=Loonbelastingschijf("Belastingschijf 1", 1, 0, 20384, 0.3665),
+            belastingschijf2=Loonbelastingschijf("Belastingschijf 2", 2, 20385, 34300, 0.381),
+            belastingschijf3=Loonbelastingschijf("Belastingschijf 3", 3, 34301, 68507, 0.381),
+            belastingschijf4=Loonbelastingschijf("Belastingschijf 4", 4, 68508, 999999999, 0.5175)) 
+
+        self.loonbelastingschaal2020 = Loonbelastingschaal(
+            naam="Belastingschaal 2020",
+            jaar="2020",
+            belastingschijf1=Loonbelastingschijf("Belastingschijf 1", 1, 0, 20711, 0.3735),
+            belastingschijf2=Loonbelastingschijf("Belastingschijf 2", 2, 20712, 34712, 0.3735),
+            belastingschijf3=Loonbelastingschijf("Belastingschijf 3", 3, 34713, 68507, 0.3735),
+            belastingschijf4=Loonbelastingschijf("Belastingschijf 4", 4, 68508, 999999, 0.495)) 
 
 
-def get_loonbelastingschijf(brutojaarsalaris, belastingschaal):
-    for belastingschijf in belastingschaal.belastingschijven:
-        if brutojaarsalaris < belastingschijf.bovengrens and \
-           brutojaarsalaris >= belastingschijf.ondergrens:
-            return(belastingschijf.schijfnummer)
+    def get_loonbelastingschijf(self, brutojaarsalaris, belastingschaal):
+        for belastingschijf in belastingschaal.belastingschijven:
+            if brutojaarsalaris < belastingschijf.bovengrens and \
+            brutojaarsalaris >= belastingschijf.ondergrens:
+                return(belastingschijf.schijfnummer)
 
 
-def bereken_loonheffing(brutojaarsalaris, loonbelastingschaal):
-    schijfnummer = get_loonbelastingschijf(brutojaarsalaris, loonbelastingschaal)
-    belastingschijf1 = loonbelastingschaal.belastingschijf1
-    belastingschijf2 = loonbelastingschaal.belastingschijf2
-    belastingschijf3 = loonbelastingschaal.belastingschijf3
-    belastingschijf4 = loonbelastingschaal.belastingschijf4
+    def bereken_loonheffing(self, brutojaarsalaris, jaar):
+        if jaar == 2017:
+            loonbelastingschaal = self.loonbelastingschaal2017
+        elif jaar == 2019:
+            loonbelastingschaal = self.loonbelastingschaal2019
+        elif jaar == 2020:
+            loonbelastingschaal = self.loonbelastingschaal2020
 
-    def opt1():
-        loonbelasting = brutojaarsalaris * belastingschijf1.loonbelastingspercentage
-        return(loonbelasting)
+        schijfnummer = self.get_loonbelastingschijf(brutojaarsalaris, loonbelastingschaal)
+        belastingschijf1 = loonbelastingschaal.belastingschijf1
+        belastingschijf2 = loonbelastingschaal.belastingschijf2
+        belastingschijf3 = loonbelastingschaal.belastingschijf3
+        belastingschijf4 = loonbelastingschaal.belastingschijf4
 
-    def opt2():
-        loonbelasting = belastingschijf1.bovengrens * \
-            belastingschijf1.loonbelastingspercentage + \
-            (brutojaarsalaris - belastingschijf1.bovengrens) * \
-            belastingschijf2.loonbelastingspercentage
-        return(loonbelasting)
+        def opt1():
+            loonbelasting = brutojaarsalaris * belastingschijf1.loonbelastingspercentage
+            return(loonbelasting)
 
-    def opt3():
-        loonbelasting = belastingschijf1.bovengrens * \
-            belastingschijf1.loonbelastingspercentage + \
-            (belastingschijf2.bovengrens - belastingschijf1.bovengrens) * \
-            belastingschijf2.loonbelastingspercentage + \
-            (brutojaarsalaris - belastingschijf2.bovengrens) * \
-            belastingschijf3.loonbelastingspercentage
-        return(loonbelasting)
+        def opt2():
+            loonbelasting = belastingschijf1.bovengrens * \
+                belastingschijf1.loonbelastingspercentage + \
+                (brutojaarsalaris - belastingschijf1.bovengrens) * \
+                belastingschijf2.loonbelastingspercentage
+            return(loonbelasting)
 
-    def opt4():
-        loonbelasting = belastingschijf1.bovengrens * \
-            belastingschijf1.loonbelastingspercentage + \
-            (belastingschijf2.bovengrens - belastingschijf1.bovengrens) * \
-            belastingschijf2.loonbelastingspercentage + \
-            (belastingschijf3.bovengrens - belastingschijf2.bovengrens) * \
-            belastingschijf3.loonbelastingspercentage + \
-            (brutojaarsalaris - belastingschijf3.bovengrens) * \
-            belastingschijf4.loonbelastingspercentage
-        return(loonbelasting)
+        def opt3():
+            loonbelasting = belastingschijf1.bovengrens * \
+                belastingschijf1.loonbelastingspercentage + \
+                (belastingschijf2.bovengrens - belastingschijf1.bovengrens) * \
+                belastingschijf2.loonbelastingspercentage + \
+                (brutojaarsalaris - belastingschijf2.bovengrens) * \
+                belastingschijf3.loonbelastingspercentage
+            return(loonbelasting)
 
-    options = {1: opt1, 2: opt2, 3: opt3, 4: opt4}
-    loonbelasting = options[schijfnummer]()
+        def opt4():
+            loonbelasting = belastingschijf1.bovengrens * \
+                belastingschijf1.loonbelastingspercentage + \
+                (belastingschijf2.bovengrens - belastingschijf1.bovengrens) * \
+                belastingschijf2.loonbelastingspercentage + \
+                (belastingschijf3.bovengrens - belastingschijf2.bovengrens) * \
+                belastingschijf3.loonbelastingspercentage + \
+                (brutojaarsalaris - belastingschijf3.bovengrens) * \
+                belastingschijf4.loonbelastingspercentage
+            return(loonbelasting)
 
-    return(round(loonbelasting, 2))
+        options = {1: opt1, 2: opt2, 3: opt3, 4: opt4}
+        loonbelasting = options[schijfnummer]()
+
+        return(round(loonbelasting, 2))

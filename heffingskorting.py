@@ -19,31 +19,48 @@ class Heffingskortingschijf:
             self.basisheffingskorting = basisheffingskorting
             self.heffingskortingpercentage = heffingskortingpercentage
 
-#In code definieren van heffingsschalen, kan later csv
-heffingskortingschaal2017 = Heffingskortingschaal(
-    naam="Heffingskortingschaal 2017",
-    jaar="2017",
-    heffingskortingschijf1=Heffingskortingschijf("heffingskortingschijf 1", 1, 0, 19982, 2254, 0),
-    heffingskortingschijf2=Heffingskortingschijf("heffingskortingschijf 2", 2, 19983, 67068, 2254, -0.04787),
-    heffingskortingschijf3=Heffingskortingschijf("heffingskortingschijf 3", 3, 67069, 99999999, 0, 0))
+class HeffingskortingCalculator():
 
-heffingskortingschaal2019 = Heffingskortingschaal(
-    naam="Heffingskortingschaal 2019",
-    jaar="2019",
-    heffingskortingschijf1=Heffingskortingschijf("heffingskortingschijf 1", 1, 0, 20384, 2477, 0),
-    heffingskortingschijf2=Heffingskortingschijf("heffingskortingschijf 2", 2, 20385, 68507, 2477, -0.05147),
-    heffingskortingschijf3=Heffingskortingschijf("heffingskortingschijf 3", 3, 68508, 99999999, 0, 0))
+    def __init__(self):
+        #In code definieren van heffingsschalen, kan later csv
+        self.heffingskortingschaal2017 = Heffingskortingschaal(
+            naam="Heffingskortingschaal 2017",
+            jaar="2017",
+            heffingskortingschijf1=Heffingskortingschijf("heffingskortingschijf 1", 1, 0, 19982, 2254, 0),
+            heffingskortingschijf2=Heffingskortingschijf("heffingskortingschijf 2", 2, 19983, 67068, 2254, -0.04787),
+            heffingskortingschijf3=Heffingskortingschijf("heffingskortingschijf 3", 3, 67069, 99999999, 0, 0))
 
-def get_heffingskortingschijf(brutojaarsalaris, heffingskortingschaal):
-    for heffingskortingschijf in heffingskortingschaal.heffingskortingschijven:
-        if brutojaarsalaris < heffingskortingschijf.bovengrens and \
-           brutojaarsalaris >= heffingskortingschijf.ondergrens:
-            return(heffingskortingschijf)
+        self.heffingskortingschaal2019 = Heffingskortingschaal(
+            naam="Heffingskortingschaal 2019",
+            jaar="2019",
+            heffingskortingschijf1=Heffingskortingschijf("heffingskortingschijf 1", 1, 0, 20384, 2477, 0),
+            heffingskortingschijf2=Heffingskortingschijf("heffingskortingschijf 2", 2, 20385, 68507, 2477, -0.05147),
+            heffingskortingschijf3=Heffingskortingschijf("heffingskortingschijf 3", 3, 68508, 99999999, 0, 0))
+
+        self.heffingskortingschaal2020 = Heffingskortingschaal(
+            naam="Heffingskortingschaal 2020",
+            jaar="2020",
+            heffingskortingschijf1=Heffingskortingschijf("heffingskortingschijf 1", 1, 0, 20711, 2711, 0),
+            heffingskortingschijf2=Heffingskortingschijf("heffingskortingschijf 2", 2, 20712, 68507, 2711, -0.05672),
+            heffingskortingschijf3=Heffingskortingschijf("heffingskortingschijf 3", 3, 68508, 99999999, 0, 0))
+
+    def get_heffingskortingschijf(self, brutojaarsalaris, heffingskortingschaal):
+        for heffingskortingschijf in heffingskortingschaal.heffingskortingschijven:
+            if brutojaarsalaris < heffingskortingschijf.bovengrens and \
+            brutojaarsalaris >= heffingskortingschijf.ondergrens:
+                return(heffingskortingschijf)
 
 
-def bereken_heffingskorting(brutojaarsalaris, heffingskortingschaal):
-    relevante_schijf = get_heffingskortingschijf(brutojaarsalaris, heffingskortingschaal)
-    heffingskorting = relevante_schijf.basisheffingskorting + \
-    relevante_schijf.heffingskortingpercentage * (brutojaarsalaris - relevante_schijf.ondergrens + 1)
-    
-    return(round(heffingskorting, 2))
+    def bereken_heffingskorting(self, brutojaarsalaris, jaar):
+        if jaar == 2017:
+            heffingskortingschaal = self.heffingskortingschaal2017
+        elif jaar == 2019:
+            heffingskortingschaal = self.heffingskortingschaal2019
+        elif jaar == 2020:
+            heffingskortingschaal = self.heffingskortingschaal2020
+
+        relevante_schijf = self.get_heffingskortingschijf(brutojaarsalaris, heffingskortingschaal)
+        heffingskorting = relevante_schijf.basisheffingskorting + \
+        relevante_schijf.heffingskortingpercentage * (brutojaarsalaris - relevante_schijf.ondergrens + 1)
+        
+        return(round(heffingskorting, 2))
