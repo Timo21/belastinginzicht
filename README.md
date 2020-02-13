@@ -1,3 +1,2 @@
 # belastinginzicht
-
-Hier Thijs, vergeet de arbeidskorting niet
+Scripts om exacte belasting makkelijk uit te rekenen en te vergelijken met een eenmanszaak inkomen
